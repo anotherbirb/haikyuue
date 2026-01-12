@@ -1,12 +1,20 @@
-p {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-}
 
 body {
-    background-image: "HINATASHOYO.webp";
+    background-image: url("Grid.png");
 }
 
-h1 {
+h1, p {
+    text-align: center;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    color: blue;
+}
+
+button {
+    display:block;
+    margin:auto;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+canvas {
+    display:block;
+    margin:auto;
 }
