@@ -42,8 +42,8 @@ const box = {
 
 const boxes = [
     //image insert when ok
-    {x: 100, y: 1, width: 50, height: 50, vx: 0, vy: 0, color: "blue", dragging: false},
-    {x: 200, y: 1, width: 5, height: 5, vx: 0, vy: 0, color: "red", dragging: false},
+    {x: 100, y: 1, width: 150, height: 150, vx: 0, vy: 0, color: "blue", dragging: false},
+    {x: 200, y: 1, width: 50, height: 50, vx: 0, vy: 0, color: "red", dragging: false},
 ]
 
 function update() {
@@ -126,8 +126,8 @@ function randomizeBox() {
         const minX = 0
         const maxY = 0
         const minY = canvas.height - box.height
-        const maxH = 100
-        const minH = 400
+        const maxH = 50
+        const minH = 500
         const maxW = 10
         const minW = 5
         box.x = Math.floor(Math.random() * (maxX - minX + 1)) + minX
