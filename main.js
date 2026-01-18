@@ -1,8 +1,11 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-const img = new Image();
-img.src = "HinataNendroid.png"
+const Hinata = new Image();
+Hinata.src = "HinataNendroid.png"
+const Kageyama  = new Image();
+Kageyama.src = "KageyamaNendroid.png"
+
 
 const GRAVITY = 0.35;
 const BOUNCE = 0.7;
@@ -42,8 +45,8 @@ const box = {
 
 const boxes = [
     //image insert when ok
-    {x: 100, y: 1, width: 150, height: 150, vx: 0, vy: 0, color: "blue", dragging: false},
-    {x: 200, y: 1, width: 50, height: 50, vx: 0, vy: 0, color: "red", dragging: false},
+    {image: Hinata, x: 100, y: 1, width: 150, height: 150, vx: 0, vy: 0, color: "blue", dragging: false},
+    {image: Hinata, x: 200, y: 1, width: 50, height: 50, vx: 0, vy: 0, color: "red", dragging: false},
 ]
 
 function update() {
@@ -107,7 +110,7 @@ function draw() {
     for (let box of boxes) {
         //ctx.strokeRect(box.x, box.y, box.width, box.height)
         ctx.fillStyle = box.color;
-        ctx.drawImage(img, box.x, box.y, box.width, box.height);
+        ctx.drawImage(box.image, box.x, box.y, box.width, box.height);
     }
 }
 
