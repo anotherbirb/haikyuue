@@ -47,54 +47,36 @@ const boxes = [
 ]
 
 function update() {
-    boxes.forEach(box => {
-        if (box !== draggingBox) {
-            updateBox(box);
+    // Apply gravity
+    for (let box of boxes) {
+        if (box === draggingBox) continue;
+
+        box.vy += GRAVITY;
+        box.y += box.vy;
+        box.x += box.vx;
+
+        //ground collision
+        if (box.y + box.height > canvas.height) {
+            box.y = canvas.height - box.height;
+            box.vy = -box.vy * BOUNCE;
+            box.vx *= FRICTION;
         }
-    })
-
-    if (!draggingBox) {
-        for (let i = 0; i < boxes.length; i++) {
-            for (let j = i + 1; j < boxes.length; j++) {
-                if (isColliding(boxes[i], boxes[j])) {
-                    console.log(boxes[i].y, boxes[j].y, "boxoes i and j and their y")
-                    resolveCollision(boxes[i], boxes[j]);
-                    
-                }
-            }
-        }
-    }
-}
-
-function updateBox(box) {
-    box.vy += GRAVITY;
-    box.x += box.vx;
-    box.y += box.vy;
-
-    //floooorrrr colision
-    if (box.y + box.height > canvas.height) {
-        box.y = canvas.height - box.height;
-        box.vy = -box.vy * BOUNCE;
-        box.vx *= FRICTION;
-    }
         //side collision
-    if (box.x < 0 ||box.x + box.width > canvas.width) {
-        box.vx = -box.vx;
-    }
+        if (box.x < 0 ||box.x + box.width > canvas.width) {
+            box.vx = -box.vx;
+        }
         //FRICTION
-    if (box.y + box.height >= canvas.height) {
-        box.vx *= 0.98;
-    }
+        if (box.y + box.height >= canvas.height) {
+            box.vx *= 0.98;
+        }
 
+    }
 }
 
 function resolveAllCollisions() {
     for (let i = 0; i < boxes.length; i++) {
         for (let j = i + 1; j < boxes.length; j++) {
-        console.log(isColliding(boxes[i], boxes[j]))
-        if (isColliding(boxes[i], boxes[j])) {
             resolveCollision(boxes[i], boxes[j]);
-        }
         }
     }
 }
@@ -113,6 +95,7 @@ function draw() {
 
 function loop() {
     update();
+    resolveAllCollisions()
     draw();
     requestAnimationFrame(loop);
 }
@@ -181,17 +164,6 @@ canvas.addEventListener("mousemove", (e) => {
     lastMouseX = mouseX;
     lastMouseY = mouseY;
 
-    //i think useless idk draggingBox.vx = mouseX - lastMouseX;
-    //draggingBox.vy = mouseY - lastMouseY;
-
-    /* tge chatgpt solution, open this up if i fail
-    mouseVX = mouseX - prevMouseX;
-    mouseVY = mouseY - prevMouseY;
-
-    prevMouseX = mouseX;
-    prevMouseY = mouseY;
-    */
-
 });
 
 canvas.addEventListener("mouseup", (e) => {
@@ -211,6 +183,7 @@ canvas.addEventListener("mouseup", (e) => {
     draggingBox = null;
 });
 
+/*
 function isColliding(a, b) {
     return (
         a.x < b.x + b.width &&
@@ -219,30 +192,40 @@ function isColliding(a, b) {
         a.y + a.height > b.y
     );
 }
+*/
 
 function resolveCollision(a, b) {
-    const overlapY = 
-        Math.min(a.y + a.height, b.y + b.height) -
-        Math.max(a.y, b.y);
-    
-    console.log("resolving collision  rn, A AND B", a, b)
+    if (
+        a.x < b.x + b.width &&
+        a.x + a.width > b.x &&
+        a.y < b.y + b.height &&
+        a.y + a.height > b.y
+    ) {
+        const percent = 0.8; //correction strength
+        const slop = 0.5; //allowerd  penetration
 
-    if (a.y < b.y) {
-        a.y -= overlapY / 2;
-        b.y += overlapY / 2;
-    } else {
-        a.y += overlapY / 2;
-        b.y -= overlapY / 2;
-    }
+        const correction = Math.max(overlapY - slop, 0) * percent;
+        
+        const axCenter = a.x  + a.width / 2;
+        const ayCenter = a.y + a.height / 2;
+        const bxCenter = b.x + b.width / 2;
+        const byCenter = b.y + b.height / 2;
 
-    const temp = a.vy;
-    a.vy = b.vy;
-    b.vy = temp;
-}
+        const dx = axCenter - bxCenter;
+        const dy = ayCenter - byCenter;
 
-function getLocation() {
-    for (let box of boxes) {
-        console.log(box.x, box.y, "GET LOCATION")
+        const overlapX = (a.width / 2 + b.width / 2) - Math.abs(dx);
+        const overlapY = (a.height / 2 + b.height / 2) - Math.abs(dx);
+        
+        if (overlapX < overlapY) {
+            const push = overlapX / 2 * Math.sign(dx);
+            if (!a.dragging) a.x += push;
+            if (!b.dragging) b.x -= push;
+        } else {
+            const push = overlapY / 2 * Math.sign(dy);
+            if (!a.dragging) a.y += push;
+            if (!b.dragging) b.y -= push;
+        }
     }
 }
 
